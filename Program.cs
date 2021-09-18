@@ -5,103 +5,27 @@ using System.Collections.Generic;
 
 namespace AdvancedInheritance
 {
-    interface IUsable
-    {
-        public int Damage { get; set; }
-    }
-
-    interface IEdible
-    {
-        public int HealAmount { get; set; }
-    }
-
-    interface IDamageable
-    {
-        public int Health { get; set; }
-    }
-
-    interface IGreetable
-    {
-        public string Reply();
-    }
-
-    class Bread : Item, IEdible
-    {
-        public int HealAmount { get; set; } = 50;
-    }
-
-    class Sword : Item, IUsable
-    {
-        public int Damage { get; set; } = 20;
-
-        public Sword()
-        {
-            base.UsedSlots = 3;
-        }
-    }
-
-    class Axe : Item, IUsable
-    {
-        public int Damage { get; set; } = 15;
-
-        public Axe()
-        {
-            base.UsedSlots = 2;
-        }
-    }
-
-    class Item
-    {
-        public int UsedSlots { get; set; }
-    }
-
-    class Mouse : Animal
-    {
-        public override string Reply()
-        {
-            return "Squeak squeak";
-        }
-
-        public Mouse()
-        {
-            base.Health = 30;
-        }
-    }
-
-    class Horse : Animal
-    {
-        public override string Reply()
-        {
-            return "Neigh neeiiiigh";
-        }
-
-        public Horse()
-        {
-            base.Health = 125;
-        }
-    }
-
-    class Animal : IDamageable, IGreetable
-    {
-        public int Health { get; set; }
-
-        public virtual string Reply()
-        {
-            return "...";
-        }
-    }
-
-    class Hero
-    {
-        public int Health { get; set; }
-
-    }
 
     class Program
     {
         static List<Animal> AnimalPen = new List<Animal>();
 
         static List<Item> Backpack = new List<Item>();
+
+        public static bool ContainsWeapon()
+        {
+            bool result = false;
+
+            foreach (var item in Backpack)
+            {
+                if (item is IUsable)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
+        }
 
         public static void PresentAnimals()
         {
@@ -273,7 +197,7 @@ namespace AdvancedInheritance
         public static void StartMeny()
         {
             string option1 = "\0";
-            string option2 = "2. Explore the world";
+            string option2 = "\n2. Explore the world";
             string option3 = "\0";
             string option4 = "\0";
             string option5 = "\0";
@@ -283,16 +207,12 @@ namespace AdvancedInheritance
 
             while (1+ 1 == 2)
             {
-                if (AnimalPen.Count > 0 && Backpack.Count > 0)
-                {
-                    option5 = "5. Fight an animal.";
-                    maxVal = 5;
-                }
 
                 if (AnimalPen.Count > 0)
                 {
-                    option3 = "3. Check your animals.";
-                    option4 = "4. Greet an animal.";
+                    option1 = "\0";
+                    option3 = "\n3. Check your animals.";
+                    option4 = "\n4. Greet an animal.";
 
                     minVal = 2;
                     maxVal = 4;
@@ -300,25 +220,41 @@ namespace AdvancedInheritance
 
                 if (Backpack.Count > 0)
                 {
-                    option1 = "1. Present Items";
+                    option1 = "\n1. Present Items";
+                    option3 = "\0";
+                    option4 = "\0";
+                    option5 = "\0";
+
 
                     minVal = 1;
                     maxVal = 2;
                 }
 
-                if (Backpack.Count > 0 && AnimalPen.Count > 0)
+                if (Backpack.Count > 0 && AnimalPen.Count > 0 && !ContainsWeapon())
                 {
+                    option1 = "\n1. Present Items";
+                    option3 = "\n3. Check your animals.";
+                    option4 = "\n4. Greet an animal.";
+
                     minVal = 1;
+                    maxVal = 4;
+                }
+
+                if (AnimalPen.Count > 0 && ContainsWeapon())
+                {
+                    option3 = "\n3. Check your animals.";
+                    option4 = "\n4. Greet an animal.";
+                    option5 = "\n5. Fight an animal.";
+
                     maxVal = 5;
                 }
 
-
                 Console.WriteLine("What do you want to do?\n" +
-                    $"\n{option1}" +
-                    $"\n{option2}" +
-                    $"\n{option3}" +
-                    $"\n{option4}" +
-                    $"\n{option5}");
+                    $"{option1}" +
+                    $"{option2}" +
+                    $"{option3}" +
+                    $"{option4}" +
+                    $"{option5}");
 
                 switch (Input(minVal, maxVal))
                 {
